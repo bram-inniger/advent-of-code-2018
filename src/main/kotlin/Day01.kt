@@ -2,20 +2,23 @@ package be.inniger.advent
 
 class Day01 {
 
-    fun solveFirst(frequencies: List<String>) = frequencies.map(String::toInt).sum()
+    fun solveFirst(changes: List<String>) = changes.map(String::toInt).sum()
 
-    fun solveSecond(strFrequencies: List<String>): Int {
-        val frequencies = strFrequencies.map(String::toInt)
-        val encounteredFrequencies = HashSet<Int>()
+    fun solveSecond(changes: List<String>): Int {
+        return solveSecondRec(changes.map(String::toInt), 0, mutableSetOf(), 0)
+    }
 
-        var currentFrequency = 0
-        var counter = 0
-
-        do {
-            encounteredFrequencies.add(currentFrequency)
-            currentFrequency += frequencies[counter++ % frequencies.size]
-        } while (!encounteredFrequencies.contains(currentFrequency))
-
-        return currentFrequency
+    // frequenciesSeen is mutable for performance reasons
+    private tailrec fun solveSecondRec(
+        changes: List<Int>, frequency: Int, frequenciesSeen: MutableSet<Int>, counter: Int
+    ): Int {
+        return if (frequenciesSeen.contains(frequency)) {
+            frequency
+        } else {
+            frequenciesSeen.add(frequency)
+            solveSecondRec(
+                changes, frequency + changes[counter % changes.size], frequenciesSeen, counter + 1
+            )
+        }
     }
 }
