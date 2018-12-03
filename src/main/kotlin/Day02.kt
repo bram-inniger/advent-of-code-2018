@@ -6,11 +6,8 @@ class Day02 {
         nrBoxIdsContainingLettersTimes(boxIds, 2) * nrBoxIdsContainingLettersTimes(boxIds, 3)
 
     private fun nrBoxIdsContainingLettersTimes(boxIds: List<String>, nrTimes: Int) =
-        boxIds.filter { label ->
-            label.groupBy { it }
-                .values
-                .map(List<Char>::size)
-                .any { it == nrTimes }
+        boxIds.map { boxId ->
+            boxId.groupBy { it }.values.map { it.size }
         }
-            .count()
+            .count { it.contains(nrTimes) }
 }
