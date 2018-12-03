@@ -20,7 +20,25 @@ class Day01Test {
 
     @Test
     fun validateFirstSolution() {
-        assertEquals(0, problem.solveFirst(input))
+        assertEquals(518, problem.solveFirst(input))
+    }
+
+    @Test
+    fun validateSecondSampleInputs() {
+        assertEquals(2, problem.solveSecond(listOf("+1", "-2", "+3", "+1")))
+
+        assertEquals(0, problem.solveSecond(listOf("+1", "-1")))
+
+        assertEquals(10, problem.solveSecond(listOf("+3", "+3", "+4", "-2", "-4")))
+
+        assertEquals(5, problem.solveSecond(listOf("-6", "+3", "+8", "+5", "-6")))
+
+        assertEquals(14, problem.solveSecond(listOf("+7", "+7", "-2", "-7", "-4")))
+    }
+
+    @Test
+    fun validateSecondSolution() {
+        assertEquals(72889, problem.solveSecond(input))
     }
 
     private val input = Thread.currentThread().contextClassLoader.getResourceAsStream("inputs/01.txt")
