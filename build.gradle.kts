@@ -9,6 +9,7 @@ version = "1.0-SNAPSHOT"
 
 dependencies {
     compile(kotlin("stdlib"))
+    compile(group = "org.pcollections", name = "pcollections", version = "3.0.3")
     testCompile(kotlin("test-junit"))
 }
 
