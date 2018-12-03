@@ -5,12 +5,9 @@ import org.pcollections.PSet
 
 class Day01 {
 
-    fun solveFirst(changes: List<String>) = changes.map(String::toInt).sum()
+    fun solveFirst(changes: List<Int>) = changes.sum()
 
-    fun solveSecond(changes: List<String>) =
-        findRepeatedFrequency(changes.map(String::toInt), 0, HashTreePSet.empty())
-
-    private tailrec fun findRepeatedFrequency(changes: List<Int>, frequency: Int, reached: PSet<Int>): Int =
+    tailrec fun solveSecond(changes: List<Int>, frequency: Int = 0, reached: PSet<Int> = HashTreePSet.empty()): Int =
         if (reached.contains(frequency)) frequency
-        else findRepeatedFrequency(changes, frequency + changes[reached.size % changes.size], reached.plus(frequency))
+        else solveSecond(changes, frequency + changes[reached.size % changes.size], reached.plus(frequency))
 }
