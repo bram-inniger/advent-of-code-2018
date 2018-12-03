@@ -20,7 +20,3 @@ tasks.withType<Wrapper> {
     gradleVersion = "5.0"
     Wrapper.DistributionType.ALL
 }
-
-tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "11"
-}
