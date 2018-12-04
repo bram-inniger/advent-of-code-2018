@@ -25,8 +25,7 @@ class Day04 {
                 entry.key to (entry.value
                     .maxBy { minute -> minute.value })
             }
-            .filter { it.second != null }
-            .maxBy { it.second!!.value }!!
+            .maxBy { it.second?.value ?: 0 }!!
 
         return sleepiestGuardByMinute.first * sleepiestGuardByMinute.second!!.key
     }
@@ -47,7 +46,7 @@ class Day04 {
     ): PMap<Int, PMap<Int, Int>> {
         if (records.isEmpty()) return minutesPerGuard
 
-        val record = records[0]!!
+        val record = records[0]
         val newRecords = records.subList(1, records.size)
 
         return when (record.recordType) {
@@ -65,7 +64,7 @@ class Day04 {
                 val addedMinutes = (sleepStarted until sleepEnded).associate { it to 1 }
                 val allMinuteKeys = existingMinutes.keys.union(addedMinutes.keys)
                 val newMinutes =
-                    allMinuteKeys.associate { it!! to ((existingMinutes[it] ?: 0) + (addedMinutes[it] ?: 0)) }
+                    allMinuteKeys.associate { it to (existingMinutes[it] ?: 0) + (addedMinutes[it] ?: 0) }
                 val newMinutesPerGuard =
                     minutesPerGuard.minus(currentGuard).plus(currentGuard, HashTreePMap.from(newMinutes))
                 toMinutesPerGuard(newRecords, currentGuard, sleepStarted, newMinutesPerGuard)
