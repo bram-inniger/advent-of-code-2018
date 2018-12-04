@@ -15,7 +15,9 @@ class Day02 {
 
         return cartesianSelfProduct(boxIds)
             .map { getCommonLetters(it) }
-            .first { it.length == wordLength - 1 }
+            .filter { it.length == wordLength - 1 }
+            .distinct()
+            .single()
     }
 
     private fun cartesianSelfProduct(boxIds: List<String>) =
