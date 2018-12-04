@@ -1,6 +1,10 @@
 package be.inniger.advent
 
 import be.inniger.advent.Day04.RecordType.*
+import org.pcollections.HashTreePMap
+import org.pcollections.PMap
+import org.pcollections.PVector
+import org.pcollections.TreePVector
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -16,9 +20,7 @@ class Day04 {
     }
 
     fun solveSecond(rawRecords: List<String>): Int {
-        val minutesPerGuard = toMinutesPerGuard(toRecords(rawRecords))
-
-        val sleepiestGuardByMinute = minutesPerGuard
+        val sleepiestGuardByMinute = toMinutesPerGuard(toRecords(rawRecords))
             .map { entry ->
                 entry.key to (entry.value
                     .maxBy { minute -> minute.value })
@@ -26,36 +28,49 @@ class Day04 {
             .filter { it.second != null }
             .maxBy { it.second!!.value }!!
 
-
         return sleepiestGuardByMinute.first * sleepiestGuardByMinute.second!!.key
     }
 
-    private fun toRecords(rawRecords: List<String>) = rawRecords.map { record ->
-        RecordType.values()
-            .filter { it.matchesRecord(record) }
-            .map { it.parseRecord(record) }
-            .single()
-    }.sortedBy { it.timestamp }
+    private fun toRecords(rawRecords: List<String>) = TreePVector.from(
+        rawRecords.map { record ->
+            values()
+                .filter { it.matchesRecord(record) }
+                .map { it.parseRecord(record) }
+                .single()
+        }.sortedBy { it.timestamp })
 
-    private fun toMinutesPerGuard(records: List<Record>): HashMap<Int, HashMap<Int, Int>> {
-        var currentGuard = -1 // will be overwritten and prevents nullability
-        var sleepStarted = -1 // will be overwritten and prevents nullability
+    private tailrec fun toMinutesPerGuard(
+        records: PVector<Record>,
+        currentGuard: Int = -1,
+        sleepStarted: Int = -1,
+        minutesPerGuard: PMap<Int, PMap<Int, Int>> = HashTreePMap.empty()
+    ): PMap<Int, PMap<Int, Int>> {
+        if (records.isEmpty()) return minutesPerGuard
 
-        val guardMinutes = HashMap<Int, HashMap<Int, Int>>()
+        val record = records[0]!!
+        val newRecords = records.subList(1, records.size)
 
-        for (record in records) when (record.recordType) {
-            SHIFT_START -> currentGuard = record.guardId!!
-            ASLEEP -> sleepStarted = record.timestamp.minute
+        return when (record.recordType) {
+            SHIFT_START -> {
+                val newGuardId = record.guardId!!
+                toMinutesPerGuard(newRecords, newGuardId, sleepStarted, minutesPerGuard)
+            }
+            ASLEEP -> {
+                val newSleepStarted = record.timestamp.minute
+                toMinutesPerGuard(newRecords, currentGuard, newSleepStarted, minutesPerGuard)
+            }
             AWAKEN -> {
                 val sleepEnded = record.timestamp.minute
-                (sleepStarted until sleepEnded).forEach {
-                    guardMinutes.computeIfAbsent(currentGuard) { HashMap() }
-                        .merge(it, 1) { u, _ -> u + 1 }
-                }
+                val existingMinutes = minutesPerGuard[currentGuard] ?: HashTreePMap.empty()
+                val addedMinutes = (sleepStarted until sleepEnded).associate { it to 1 }
+                val allMinuteKeys = existingMinutes.keys.union(addedMinutes.keys)
+                val newMinutes =
+                    allMinuteKeys.associate { it!! to ((existingMinutes[it] ?: 0) + (addedMinutes[it] ?: 0)) }
+                val newMinutesPerGuard =
+                    minutesPerGuard.minus(currentGuard).plus(currentGuard, HashTreePMap.from(newMinutes))
+                toMinutesPerGuard(newRecords, currentGuard, sleepStarted, newMinutesPerGuard)
             }
         }
-
-        return guardMinutes
     }
 
     private data class Record(val timestamp: LocalDateTime, val recordType: RecordType, val guardId: Int? = null)
