@@ -7,37 +7,55 @@ import java.time.format.DateTimeFormatter
 class Day04 {
 
     fun solveFirst(rawRecords: List<String>): Int {
-        val records = rawRecords.map { record ->
-            RecordType.values()
-                .filter { it.matchesRecord(record) }
-                .map { it.parseRecord(record) }
-                .single()
-        }.sortedBy { it.timestamp }
+        val minutesPerGuard = toMinutesPerGuard(toRecords(rawRecords))
 
+        val sleepiestGuard = minutesPerGuard.maxBy { it.value.map { entry -> entry.value }.sum() }!!.key
+        val sleepiestMinute = minutesPerGuard[sleepiestGuard]!!.maxBy { it.value }!!.key
+
+        return sleepiestGuard * sleepiestMinute
+    }
+
+    fun solveSecond(rawRecords: List<String>): Int {
+        val minutesPerGuard = toMinutesPerGuard(toRecords(rawRecords))
+
+        val sleepiestGuardByMinute = minutesPerGuard
+            .map { entry ->
+                entry.key to (entry.value
+                    .maxBy { minute -> minute.value })
+            }
+            .filter { it.second != null }
+            .maxBy { it.second!!.value }!!
+
+
+        return sleepiestGuardByMinute.first * sleepiestGuardByMinute.second!!.key
+    }
+
+    private fun toRecords(rawRecords: List<String>) = rawRecords.map { record ->
+        RecordType.values()
+            .filter { it.matchesRecord(record) }
+            .map { it.parseRecord(record) }
+            .single()
+    }.sortedBy { it.timestamp }
+
+    private fun toMinutesPerGuard(records: List<Record>): HashMap<Int, HashMap<Int, Int>> {
         var currentGuard = -1 // will be overwritten and prevents nullability
         var sleepStarted = -1 // will be overwritten and prevents nullability
 
         val guardMinutes = HashMap<Int, HashMap<Int, Int>>()
 
-        for (record in records) {
-            when (record.recordType) {
-                SHIFT_START -> {
-                    currentGuard = record.guardId!!
+        for (record in records) when (record.recordType) {
+            SHIFT_START -> currentGuard = record.guardId!!
+            ASLEEP -> sleepStarted = record.timestamp.minute
+            AWAKEN -> {
+                val sleepEnded = record.timestamp.minute
+                (sleepStarted until sleepEnded).forEach {
                     guardMinutes.computeIfAbsent(currentGuard) { HashMap() }
-                }
-                ASLEEP -> sleepStarted = record.timestamp.minute
-                AWAKEN -> {
-                    val sleepEnded = record.timestamp.minute
-                    (sleepStarted until sleepEnded)
-                        .forEach { guardMinutes[currentGuard]!!.merge(it, 1) { u, _ -> u + 1 } }
+                        .merge(it, 1) { u, _ -> u + 1 }
                 }
             }
         }
 
-        val sleepiestGuard = guardMinutes.maxBy { it.value.map { entry -> entry.value }.sum() }!!.key
-        val sleepiestMinute = guardMinutes[sleepiestGuard]!!.maxBy { it.value }!!.key
-
-        return sleepiestGuard * sleepiestMinute
+        return guardMinutes
     }
 
     private data class Record(val timestamp: LocalDateTime, val recordType: RecordType, val guardId: Int? = null)
