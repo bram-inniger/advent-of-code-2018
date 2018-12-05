@@ -17,6 +17,16 @@ class Day05Test {
         assertEquals(11298, problem.solveFirst(input))
     }
 
+    @Test
+    fun validateSecondSampleInputs() {
+        assertEquals("daDA".length, problem.solveSecond("dabAcCaCBAcCcaDA"))
+    }
+
+    @Test
+    fun validateSecondSolution() {
+        assertEquals(5148, problem.solveSecond(input))
+    }
+
     private val input = Thread.currentThread().contextClassLoader.getResourceAsStream("inputs/05.txt")
         .reader()
         .readLines()

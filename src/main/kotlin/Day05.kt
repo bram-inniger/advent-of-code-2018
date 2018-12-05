@@ -2,14 +2,21 @@ package be.inniger.advent
 
 class Day05 {
 
+    fun solveFirst(polymer: String) = calculateCollapsedPolymerLength(polymer)
+
+    fun solveSecond(polymer: String) = ('a'..'z')
+        .map { polymer.replace("""[$it${pairs[it]}]""".toRegex(), "") }
+        .map { calculateCollapsedPolymerLength(it) }
+        .min()!!
+
     // TODO rewrite without mutable state
-    fun solveFirst(polymerStr: String): Int {
+    private fun calculateCollapsedPolymerLength(polymerStr: String): Int {
         val polymer = StringBuilder(polymerStr)
         var done = false
 
         while (!done) {
             done = true
-            
+
             var i = polymer.lastIndex
 
             while (i > 0) {
@@ -19,7 +26,7 @@ class Day05 {
                     polymer.deleteCharAt(i)
                     done = false
                 }
-                
+
                 i--
             }
         }
