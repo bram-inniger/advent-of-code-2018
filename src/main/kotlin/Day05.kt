@@ -9,14 +9,12 @@ class Day05 {
         .map { calculateCollapsedPolymerLength(it) }
         .min()!!
 
-    // TODO rewrite without mutable state
     private fun calculateCollapsedPolymerLength(polymerStr: String): Int {
         val polymer = StringBuilder(polymerStr)
         var done = false
 
         while (!done) {
             done = true
-
             var i = polymer.lastIndex
 
             while (i > 0) {
