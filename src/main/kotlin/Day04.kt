@@ -65,7 +65,7 @@ class Day04 {
                 ShiftStartRecord.matches(record) -> ShiftStartRecord.parseFrom(record)
                 AsleepRecord.matches(record) -> AsleepRecord.parseFrom(record)
                 AwakenRecord.matches(record) -> AwakenRecord.parseFrom(record)
-                else -> throw IllegalArgumentException() // TODO find way to tell compiler these are the only 3 implementations
+                else -> throw IllegalArgumentException()
             }
 
             fun parseTimestamp(regex: Regex, record: String): LocalDateTime =
