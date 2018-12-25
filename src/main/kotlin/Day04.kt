@@ -1,10 +1,6 @@
 package be.inniger.advent
 
 import be.inniger.advent.Day04.RecordType.*
-import org.pcollections.HashTreePMap
-import org.pcollections.PMap
-import org.pcollections.PVector
-import org.pcollections.TreePVector
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -30,46 +26,36 @@ class Day04 {
         return sleepiestGuardByMinute.first * sleepiestGuardByMinute.second!!.key
     }
 
-    private fun toRecords(rawRecords: List<String>) = TreePVector.from(
-        rawRecords.map { record ->
-            values()
-                .filter { it.matchesRecord(record) }
-                .map { it.parseRecord(record) }
-                .single()
-        }.sortedBy { it.timestamp })
+    private fun toRecords(rawRecords: List<String>) = rawRecords
+        .map { record ->
+            RecordType.values().filter { it.matchesRecord(record) }.map { it.parseRecord(record) }.single()
+        }
+        .sortedBy { it.timestamp }
 
-    private tailrec fun toMinutesPerGuard(
-        records: PVector<Record>,
-        currentGuard: Int = -1,
-        sleepStarted: Int = -1,
-        minutesPerGuard: PMap<Int, PMap<Int, Int>> = HashTreePMap.empty()
-    ): PMap<Int, PMap<Int, Int>> {
-        if (records.isEmpty()) return minutesPerGuard
 
-        val record = records[0]
-        val newRecords = records.subList(1, records.size)
+    private fun toMinutesPerGuard(records: List<Record>): Map<Int, Map<Int, Int>> {
+        val minutesPerGuard: MutableMap<Int, MutableMap<Int, Int>> =
+            records.map { it.guardId }
+                .filter { it != null }
+                .associate { it!! to mutableMapOf<Int, Int>() }
+                .toMutableMap()
+        var currentGuard: Int = -1
+        var sleepStarted: Int = -1
 
-        return when (record.recordType) {
-            SHIFT_START -> {
-                val newGuardId = record.guardId!!
-                toMinutesPerGuard(newRecords, newGuardId, sleepStarted, minutesPerGuard)
-            }
-            ASLEEP -> {
-                val newSleepStarted = record.timestamp.minute
-                toMinutesPerGuard(newRecords, currentGuard, newSleepStarted, minutesPerGuard)
-            }
-            AWAKEN -> {
-                val sleepEnded = record.timestamp.minute
-                val existingMinutes = minutesPerGuard[currentGuard] ?: HashTreePMap.empty()
-                val addedMinutes = (sleepStarted until sleepEnded).associate { it to 1 }
-                val allMinuteKeys = existingMinutes.keys.union(addedMinutes.keys)
-                val newMinutes =
-                    allMinuteKeys.associate { it to (existingMinutes[it] ?: 0) + (addedMinutes[it] ?: 0) }
-                val newMinutesPerGuard =
-                    minutesPerGuard.minus(currentGuard).plus(currentGuard, HashTreePMap.from(newMinutes))
-                toMinutesPerGuard(newRecords, currentGuard, sleepStarted, newMinutesPerGuard)
+        records.forEach { (timestamp, recordType, guardId) ->
+            when (recordType) {
+                // FIXME make Record interface and have multiple data class types
+                SHIFT_START -> currentGuard = guardId!!
+                ASLEEP -> sleepStarted = timestamp.minute
+                AWAKEN -> {
+                    val sleepEnded = timestamp.minute
+                    (sleepStarted until sleepEnded)
+                        .forEach { minute -> minutesPerGuard[currentGuard]!!.merge(minute, 1) { t, u -> t + u } }
+                }
             }
         }
+
+        return minutesPerGuard
     }
 
     private data class Record(val timestamp: LocalDateTime, val recordType: RecordType, val guardId: Int? = null)

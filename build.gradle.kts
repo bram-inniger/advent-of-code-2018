@@ -8,10 +8,13 @@ group = "be.inniger"
 version = "1.0-SNAPSHOT"
 
 dependencies {
-    compile(kotlin("stdlib"))
-    compile(group = "org.pcollections", name = "pcollections", version = "3.0.3")
-    testCompile(kotlin("test-junit"))
+    implementation(kotlin("stdlib-jdk8"))
+    implementation(group = "io.vavr", name = "vavr-kotlin", version = "0.9.2")
+    testImplementation(kotlin("test-junit"))
 }
+
+val compileKotlin: KotlinCompile by tasks
+compileKotlin.kotlinOptions.jvmTarget = "1.8"
 
 repositories {
     jcenter()
