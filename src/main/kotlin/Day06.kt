@@ -61,7 +61,7 @@ class Day06 {
         .map { coordinate.manhattanDistanceTo(it) }
         .sum()
 
-    data class Coordinate(val x: Int, val y: Int) {
+    private data class Coordinate(internal val x: Int, internal val y: Int) {
 
         fun manhattanDistanceTo(point: Coordinate) =
             abs(x - point.x) + abs(y - point.y)
@@ -77,9 +77,9 @@ class Day06 {
         }
     }
 
-    data class LocatedCoordinate(val coordinate: Coordinate, val nearest: Coordinate)
+    private data class LocatedCoordinate(internal val coordinate: Coordinate, internal val nearest: Coordinate)
 
-    data class View(val minX: Int, val minY: Int, val maxX: Int, val maxY: Int) {
+    private data class View(internal val minX: Int, internal val minY: Int, internal val maxX: Int, internal val maxY: Int) {
         companion object {
             fun fromPoints(coordinates: List<Coordinate>): View {
                 val minX = coordinates.minBy { it.x }!!.x
