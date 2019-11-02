@@ -5,22 +5,38 @@ import kotlin.math.abs
 class Day06 {
 
     fun solveFirst(inputCoordinates: List<String>): Int {
-        val points = inputCoordinates.indices
-            .map { Coordinate.from(inputCoordinates[it]) }
-
+        val points = pointsFromInput(inputCoordinates)
         val view = View.fromPoints(points)
+        val coordinates = coordinatesFromView(view)
 
+        return coordinates
+            .mapNotNull { locate(it, points) }
+            .groupBy { it.nearest }
+            .values
+            .mapNotNull { getSizeOfGroup(it, view) }
+            .max()!!
+    }
+
+    fun solveSecond(inputCoordinates: List<String>, upperLimit: Int): Int {
+        val points = pointsFromInput(inputCoordinates)
+        val view = View.fromPoints(points)
+        val coordinates = coordinatesFromView(view)
+
+        return coordinates.map { distanceToAllPoints(it, points) }
+            .filter { it < upperLimit }
+            .count()
+    }
+
+    private fun pointsFromInput(inputCoordinates: List<String>) = inputCoordinates.indices
+        .map { Coordinate.from(inputCoordinates[it]) }
+
+    private fun coordinatesFromView(view: View): List<Coordinate> {
         return (view.minX..view.maxX)
             .flatMap { x ->
                 (view.minY..view.maxY)
                     .map { y -> x to y }
             }
             .map { Coordinate.from(it) }
-            .mapNotNull { locate(it, points) }
-            .groupBy { it.nearest }
-            .values
-            .mapNotNull { getSizeOfGroup(it, view) }
-            .max()!!
     }
 
     private fun locate(coordinate: Coordinate, points: List<Coordinate>): LocatedCoordinate? =
@@ -40,6 +56,10 @@ class Day06 {
             coordinate.y == view.minY ||
             coordinate.x == view.maxX ||
             coordinate.y == view.maxY
+
+    private fun distanceToAllPoints(coordinate: Coordinate, points: List<Coordinate>): Int = points
+        .map { coordinate.manhattanDistanceTo(it) }
+        .sum()
 
     data class Coordinate(val x: Int, val y: Int) {
 
