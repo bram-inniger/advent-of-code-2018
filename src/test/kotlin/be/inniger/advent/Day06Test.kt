@@ -12,6 +12,7 @@ class Day06Test {
     }
 
     private val problem = Day06()
+    private val input = readInputFile("06")
     private val sampleCoordinates = listOf(
         "1, 1",
         "1, 6",
@@ -40,6 +41,4 @@ class Day06Test {
     fun validateSecondSolution() {
         assertEquals(35237, problem.solveSecond(input, PROBLEM_UPPER_DISTANCE))
     }
-
-    private val input = readInputFile("06")
 }

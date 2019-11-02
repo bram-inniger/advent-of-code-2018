@@ -7,6 +7,7 @@ import kotlin.test.assertEquals
 class Day01Test {
 
     private val problem = Day01()
+    private val input = readInputFile("01").map(String::toInt)
 
     @Test
     fun validateFirstSampleInputs() {
@@ -41,7 +42,4 @@ class Day01Test {
     fun validateSecondSolution() {
         assertEquals(72889, problem.solveSecond(input))
     }
-
-    private val input = readInputFile("01")
-        .map(String::toInt)
 }

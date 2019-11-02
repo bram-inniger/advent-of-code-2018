@@ -7,6 +7,7 @@ import kotlin.test.assertEquals
 class Day07Test {
 
     private val problem = Day07()
+    private val input = readInputFile("07")
 
     @Test
     fun validateFirstSampleInputs() {
@@ -27,6 +28,4 @@ class Day07Test {
     fun validateFirstSolution() {
         assertEquals("CGKMUWXFAIHSYDNLJQTREOPZBV", problem.solveFirst(input))
     }
-
-    private val input = readInputFile("07")
 }
