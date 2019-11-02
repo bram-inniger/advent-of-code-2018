@@ -63,16 +63,16 @@ class Day06 {
 
     private data class Coordinate(internal val x: Int, internal val y: Int) {
 
-        fun manhattanDistanceTo(point: Coordinate) =
+        internal fun manhattanDistanceTo(point: Coordinate) =
             abs(x - point.x) + abs(y - point.y)
 
         companion object {
-            fun from(line: String) =
+            internal fun from(line: String) =
                 line.split(", ")
                     .map { it.toInt() }
                     .let { Coordinate(it[0], it[1]) }
 
-            fun from(pair: Pair<Int, Int>) =
+            internal fun from(pair: Pair<Int, Int>) =
                 Coordinate(pair.first, pair.second)
         }
     }
@@ -81,7 +81,7 @@ class Day06 {
 
     private data class View(internal val minX: Int, internal val minY: Int, internal val maxX: Int, internal val maxY: Int) {
         companion object {
-            fun fromPoints(coordinates: List<Coordinate>): View {
+            internal fun fromPoints(coordinates: List<Coordinate>): View {
                 val minX = coordinates.minBy { it.x }!!.x
                 val minY = coordinates.minBy { it.y }!!.y
                 val maxX = coordinates.maxBy { it.x }!!.x
