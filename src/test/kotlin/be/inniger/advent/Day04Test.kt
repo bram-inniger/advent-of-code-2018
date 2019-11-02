@@ -1,11 +1,12 @@
 package be.inniger.advent
 
+import be.inniger.advent.util.readInputFile
 import org.junit.Test
 import kotlin.test.assertEquals
 
 class Day04Test {
 
-    private val problem: Day04 = Day04()
+    private val problem = Day04()
 
     @Test
     fun validateFirstSampleInputs() {
@@ -67,7 +68,5 @@ class Day04Test {
         assertEquals(71976, problem.solveSecond(input))
     }
 
-    private val input = Thread.currentThread().contextClassLoader.getResourceAsStream("inputs/04.txt")
-        .reader()
-        .readLines()
+    private val input = readInputFile("04")
 }
