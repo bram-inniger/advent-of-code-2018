@@ -6,6 +6,13 @@ import kotlin.test.assertEquals
 
 class Day07Test {
 
+    companion object {
+        const val SAMPLE_NR_WORKERS = 2
+        const val SAMPLE_TIME_ADDITION = 0
+        const val PROBLEM_NR_WORKERS = 5
+        const val PROBLEM_TIME_ADDITION = 60
+    }
+
     private val problem = Day07()
     private val input = readInputFile("07")
     private val requirements = listOf(
@@ -26,5 +33,15 @@ class Day07Test {
     @Test
     fun validateFirstSolution() {
         assertEquals("CGKMUWXFAIHSYDNLJQTREOPZBV", problem.solveFirst(input))
+    }
+
+    @Test
+    fun validateSecondSampleInputs() {
+        assertEquals(15, problem.solveSecond(requirements, SAMPLE_NR_WORKERS, SAMPLE_TIME_ADDITION))
+    }
+
+    @Test
+    fun validateSecondSolution() {
+        assertEquals(1046, problem.solveSecond(input, PROBLEM_NR_WORKERS, PROBLEM_TIME_ADDITION))
     }
 }

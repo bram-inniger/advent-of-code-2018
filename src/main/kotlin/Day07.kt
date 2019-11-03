@@ -5,7 +5,13 @@ import java.util.TreeSet
 
 class Day07 {
 
-    fun solveFirst(requirements: List<String>): String {
+    fun solveFirst(requirements: List<String>) =
+        solve(requirements).sequence
+
+    fun solveSecond(requirements: List<String>, nrWorkers: Int, timeAddition: Int) =
+        solve(requirements, nrWorkers, timeAddition).time
+
+    private fun solve(requirements: List<String>, nrWorkers: Int = 1, timeAddition: Int = 0): Result {
         val dependenciesList = requirements.map { Dependency.from(it) }
 
         val dependencies = dependenciesList
@@ -15,24 +21,34 @@ class Day07 {
             .toMap()
             .toMutableMap()
 
-        val result = StringBuilder()
         val availableSteps: SortedSet<Char> = TreeSet(findParentSteps(dependencies))
+        val activeTasks = mutableSetOf<Task>()
+        val sequence = StringBuilder()
+        var time = 0
 
-        while (availableSteps.isNotEmpty()) {
-            val currentStep = availableSteps.first() // First step is the first one coming in the alphabet
+        while (availableSteps.isNotEmpty() || activeTasks.isNotEmpty()) {
+            // Clean up finished tasks
+            val doneTasks = activeTasks.filter { it.hasFinished(time) }
+            activeTasks.removeAll(doneTasks)
+            doneTasks.forEach { resolveStep(it.step, dependencies, availableSteps) }
+            doneTasks.forEach { sequence.append(it.step) }
 
-            dependencies.values.forEach { it.remove(currentStep) } // Remove this dependency from all other steps
-            val newlyAvailableSteps = dependencies.entries // Check which new steps now become available
-                .filter { it.value.isEmpty() }
-                .map { it.key }
-            availableSteps.remove(currentStep) // Remove the currently taken step
-            availableSteps.addAll(newlyAvailableSteps) // Add all newly available steps
-            newlyAvailableSteps.forEach { dependencies.remove(it) } // Remove now empty steps not to get scheduled again
+            // Put available workers to work on open tasks
+            val availableWorkers = nrWorkers - activeTasks.size
+            for (i in 1..availableWorkers) {
+                if (availableSteps.isNotEmpty()) {
+                    val step = availableSteps.first()
+                    val task = Task.from(step, time, timeAddition)
 
-            result.append(currentStep)
+                    availableSteps.remove(step)
+                    activeTasks.add(task)
+                }
+            }
+
+            time++
         }
 
-        return result.toString()
+        return Result(sequence.toString(), time - 1)
     }
 
     private fun findParentSteps(dependencies: MutableMap<Char, MutableSet<Char>>): Set<Char> {
@@ -48,7 +64,21 @@ class Day07 {
         else throw NoSuchElementException()
     }
 
-    private data class Dependency(val beforeStep: Char, val afterStep: Char) {
+    private fun resolveStep(
+        step: Char,
+        dependencies: MutableMap<Char, MutableSet<Char>>,
+        availableSteps: SortedSet<Char>
+    ) {
+        dependencies.values.forEach { it.remove(step) } // Remove this dependency from all other steps
+        val newlyAvailableSteps = dependencies.entries // Check which new steps now become available
+            .filter { it.value.isEmpty() }
+            .map { it.key }
+        availableSteps.remove(step) // Remove the currently taken step
+        availableSteps.addAll(newlyAvailableSteps) // Add all newly available steps
+        newlyAvailableSteps.forEach { dependencies.remove(it) } // Remove now empty steps not to get scheduled again
+    }
+
+    private data class Dependency(internal val beforeStep: Char, internal val afterStep: Char) {
         companion object {
             private val regex = """^Step (\w) must be finished before step (\w) can begin\.$""".toRegex()
 
@@ -58,4 +88,18 @@ class Day07 {
             }
         }
     }
+
+    private data class Task(internal val step: Char, private val endTime: Int) {
+        internal fun hasFinished(currentTime: Int) = currentTime >= endTime
+
+        companion object {
+            internal fun from(step: Char, startTime: Int, timeAddition: Int) =
+                Task(step, calculateEndTime(step, startTime, timeAddition))
+
+            private fun calculateEndTime(step: Char, startTime: Int, timeAddition: Int) =
+                step - 'A' + 1 + startTime + timeAddition
+        }
+    }
+
+    private data class Result(internal val sequence: String, internal val time: Int)
 }
