@@ -1,43 +1,61 @@
 package be.inniger.advent
 
+import java.util.SortedSet
+import java.util.TreeSet
+
 class Day07 {
 
     fun solveFirst(requirements: List<String>): String {
-        val dependenciesList = requirements.map(::Dependency)
-        
-        val dependencies = dependenciesList
-            .groupBy(Dependency::beforeStep, Dependency::afterStep)
-            .entries
-            .associate { it.key to it.value.toMutableSet() }
-            .toMutableMap()
-        
-        dependenciesList.map { it.afterStep }.forEach {dependencies.putIfAbsent(it, mutableSetOf())}
-        
-        return solveRec(dependencies, "")
-    }
+        val dependenciesList = requirements.map { Dependency.from(it) }
 
-    private tailrec fun solveRec(dependencies: MutableMap<Char, MutableSet<Char>>, path: String): String =
-        if (dependencies.isEmpty()) path
-        else {
-            val unavailableSteps = dependencies.values.flatten().distinct()
-            val availableSteps = dependencies.keys.minus(unavailableSteps)
-            val nextStep = availableSteps.min()
-            dependencies.remove(nextStep)
-            
-            solveRec(dependencies, path + nextStep)
+        val dependencies = dependenciesList
+            .groupBy(Dependency::afterStep, Dependency::beforeStep)
+            .entries
+            .map { it.key to it.value.toMutableSet() }
+            .toMap()
+            .toMutableMap()
+
+        val result = StringBuilder()
+        val availableSteps: SortedSet<Char> = TreeSet(findParentSteps(dependencies))
+
+        while (availableSteps.isNotEmpty()) {
+            val currentStep = availableSteps.first() // First step is the first one coming in the alphabet
+
+            dependencies.values.forEach { it.remove(currentStep) } // Remove this dependency from all other steps
+            val newlyAvailableSteps = dependencies.entries // Check which new steps now become available
+                .filter { it.value.isEmpty() }
+                .map { it.key }
+            availableSteps.remove(currentStep) // Remove the currently taken step
+            availableSteps.addAll(newlyAvailableSteps) // Add all newly available steps
+            newlyAvailableSteps.forEach { dependencies.remove(it) } // Remove now empty steps not to get scheduled again
+
+            result.append(currentStep)
         }
 
-    private class Dependency internal constructor(requirement: String) {
-        internal val beforeStep: Char
-        internal val afterStep: Char
+        return result.toString()
+    }
 
-        private val regex = """^Step (\w) must be finished before step (\w) can begin\.$""".toRegex()
+    private fun findParentSteps(dependencies: MutableMap<Char, MutableSet<Char>>): Set<Char> {
+        val prerequisiteSteps = dependencies.values
+            .flatten()
+            .toSet()
+        val dependentSteps = dependencies.keys
 
-        init {
-            val (beforeStep, afterStep) = regex.find(requirement)!!.destructured
+        // All steps required to happen before another, minus the ones that themselves have requirements
+        val parentSteps = prerequisiteSteps.subtract(dependentSteps)
 
-            this.beforeStep = beforeStep.single()
-            this.afterStep = afterStep.single()
+        return if (parentSteps.isNotEmpty()) parentSteps
+        else throw NoSuchElementException()
+    }
+
+    private data class Dependency(val beforeStep: Char, val afterStep: Char) {
+        companion object {
+            private val regex = """^Step (\w) must be finished before step (\w) can begin\.$""".toRegex()
+
+            internal fun from(requirement: String): Dependency {
+                val (beforeStep, afterStep) = regex.find(requirement)!!.destructured
+                return Dependency(beforeStep.single(), afterStep.single())
+            }
         }
     }
 }
