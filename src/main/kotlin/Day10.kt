@@ -2,14 +2,21 @@ package be.inniger.advent
 
 class Day10 {
 
-    fun solveFirst(pointDescriptions: List<String>): String {
+    fun solveFirst(pointDescriptions: List<String>) =
+        findMessage(pointDescriptions).message
+
+    fun solveSecond(pointDescriptions: List<String>) =
+        findMessage(pointDescriptions).time
+
+    private fun findMessage(pointDescriptions: List<String>): MessageResult {
         val points = pointDescriptions.map { Point.from(it) }
 
         val minimumSpreadTime = findMinimumSpreadTime(points)
         val minimumSpreadPositions = positionsAt(minimumSpreadTime, points)
         val minimumSpreadView = viewFrom(minimumSpreadPositions)
+        val message = prettyPrintPositions(minimumSpreadPositions, minimumSpreadView)
 
-        return prettyPrintPositions(minimumSpreadPositions, minimumSpreadView)
+        return MessageResult(message, minimumSpreadTime)
     }
 
     // Theory: points converge into a message then diverge again, find the minimum spread to find the message
@@ -52,11 +59,11 @@ class Day10 {
 
         val height = view.maximum.yPosition - minY + 1
         val width = view.maximum.xPosition - minX + 1
-        val print = Array(height) { CharArray(width) { '.' } }
+        val message = Array(height) { CharArray(width) { '.' } }
 
-        positions.forEach { print[it.yPosition - minY][it.xPosition - minX] = '#' }
+        positions.forEach { message[it.yPosition - minY][it.xPosition - minX] = '#' }
 
-        return print.map { it.joinToString("") }.joinToString(separator = "\n") { it }
+        return message.map { it.joinToString("") }.joinToString(separator = "\n") { it }
     }
 
     private data class Point(internal val initialPosition: Position, internal val velocity: Velocity) {
@@ -84,4 +91,6 @@ class Day10 {
         internal fun calculateSpread() =
             (maximum.xPosition - minimum.xPosition) + (maximum.yPosition - minimum.yPosition)
     }
+
+    private data class MessageResult(internal val message: String, internal val time: Int)
 }
