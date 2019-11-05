@@ -20,4 +20,16 @@ class Day11Test {
     fun validateFirstSolution() {
         assertEquals("235,16", problem.solveFirst(input))
     }
+
+    @Test
+    fun validateSecondSampleInputs() {
+//        assertEquals("90,269,16", problem.solveSecond(18)) // FIXME too slow
+
+//        assertEquals("232,251,12", problem.solveSecond(42)) // FIXME too slow
+    }
+
+    @Test
+    fun validateSecondSolution() {
+//        assertEquals("236,227,14", problem.solveSecond(input)) // FIXME too slow
+    }
 }

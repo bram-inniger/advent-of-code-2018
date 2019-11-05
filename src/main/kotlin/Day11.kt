@@ -4,10 +4,16 @@ class Day11 {
 
     companion object {
         private const val GRID_SIZE = 300
-        private const val POWER_SQUARE_SIZE = 3
+        private const val DEFAULT_SQUARE_SIZE = 3
     }
 
-    fun solveFirst(serialNumber: Int): String {
+    fun solveFirst(serialNumber: Int) =
+        solveGrid(serialNumber).simpleToString()
+
+    fun solveSecond(serialNumber: Int) =
+        solveGrid(serialNumber, (1..GRID_SIZE).toList()).fullToString()
+
+    private fun solveGrid(serialNumber: Int, squareSizes: List<Int> = listOf(DEFAULT_SQUARE_SIZE)): SearchResult {
         val powers = Array(GRID_SIZE) { IntArray(GRID_SIZE) }
 
         for (x in 0 until GRID_SIZE) {
@@ -16,7 +22,7 @@ class Day11 {
             }
         }
 
-        return findHighestSquare(powers).toString()
+        return findHighestSquare(powers, squareSizes)
     }
 
     private fun calculateValue(x: Int, y: Int, serialNumber: Int): Int {
@@ -30,34 +36,43 @@ class Day11 {
         return power
     }
 
-    private fun findHighestSquare(powers: Array<IntArray>): Coordinate {
+    private fun findHighestSquare(powers: Array<IntArray>, squareSizes: List<Int>): SearchResult {
         var highestPower = Int.MIN_VALUE
         var powerX = -1
         var powerY = -1
+        var powerSquareSize = -1
 
-        for (x in 0 until GRID_SIZE + 1 - POWER_SQUARE_SIZE) {
-            for (y in 0 until GRID_SIZE + 1 - POWER_SQUARE_SIZE) {
-                var power = 0
+        for (squareSize in squareSizes) {
+            for (x in 0 until GRID_SIZE + 1 - squareSize) {
+                for (y in 0 until GRID_SIZE + 1 - squareSize) {
+                    var power = 0
 
-                for (innerX in x until x + POWER_SQUARE_SIZE) {
-                    for (innerY in y until y + POWER_SQUARE_SIZE) {
-                        power += powers[innerX][innerY]
+                    for (innerX in x until x + squareSize) {
+                        for (innerY in y until y + squareSize) {
+                            power += powers[innerX][innerY]
+                        }
                     }
-                }
 
-                if (power > highestPower) {
-                    highestPower = power
-                    powerX = x
-                    powerY = y
+                    if (power > highestPower) {
+                        highestPower = power
+                        powerX = x
+                        powerY = y
+                        powerSquareSize = squareSize
+                    }
                 }
             }
         }
 
-        return Coordinate(powerX + 1, powerY + 1)
+        return SearchResult(powerX + 1, powerY + 1, powerSquareSize)
     }
 
-    private data class Coordinate(private val x: Int, private val y: Int) {
+    private data class SearchResult(
+        private val x: Int,
+        private val y: Int,
+        private val squareSize: Int = DEFAULT_SQUARE_SIZE
+    ) {
+        fun simpleToString() = "$x,$y"
 
-        override fun toString() = "$x,$y"
+        fun fullToString() = "$x,$y,$squareSize"
     }
 }
