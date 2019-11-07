@@ -89,17 +89,17 @@ class Day12 {
         pattern.combination.indices
             .all { pattern.combination[it] == plants.contains(plant - 2 + it) }
 
-    private data class Pattern(internal val combination: List<Boolean>, internal val plant: Boolean) {
+    private data class Pattern(val combination: List<Boolean>, val plant: Boolean) {
         companion object {
-            private val regex = """^([.#]{5}) => ([.#])$""".toRegex()
+            val regex = """^([.#]{5}) => ([.#])$""".toRegex()
 
-            internal fun from(pointDescription: String): Pattern {
+            fun from(pointDescription: String): Pattern {
                 val (combination, plant) = regex.find(pointDescription)!!.destructured
 
                 return Pattern(combination.map { parseChar(it) }, parseChar(plant.single()))
             }
 
-            internal fun parseChar(char: Char) = when (char) {
+            fun parseChar(char: Char) = when (char) {
                 '#' -> true
                 '.' -> false
                 else -> throw IllegalArgumentException()
@@ -108,8 +108,6 @@ class Day12 {
     }
 
     private data class RepeatingPlants(
-        internal val plants: SortedSet<Long>,
-        internal val movementDelta: Long,
-        internal val startingGeneration: Long
+        val plants: SortedSet<Long>, val movementDelta: Long, val startingGeneration: Long
     )
 }

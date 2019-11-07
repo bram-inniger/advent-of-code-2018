@@ -66,11 +66,7 @@ class Day11 {
         return SearchResult(powerX + 1, powerY + 1, powerSquareSize)
     }
 
-    private data class SearchResult(
-        private val x: Int,
-        private val y: Int,
-        private val squareSize: Int = DEFAULT_SQUARE_SIZE
-    ) {
+    private data class SearchResult(val x: Int, val y: Int, val squareSize: Int = DEFAULT_SQUARE_SIZE) {
         fun simpleToString() = "$x,$y"
 
         fun fullToString() = "$x,$y,$squareSize"

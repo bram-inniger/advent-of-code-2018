@@ -61,27 +61,27 @@ class Day06 {
         .map { coordinate.manhattanDistanceTo(it) }
         .sum()
 
-    private data class Coordinate(internal val x: Int, internal val y: Int) {
+    private data class Coordinate(val x: Int, val y: Int) {
 
-        internal fun manhattanDistanceTo(point: Coordinate) =
+        fun manhattanDistanceTo(point: Coordinate) =
             abs(x - point.x) + abs(y - point.y)
 
         companion object {
-            internal fun from(line: String) =
+            fun from(line: String) =
                 line.split(", ")
                     .map { it.toInt() }
                     .let { Coordinate(it[0], it[1]) }
 
-            internal fun from(pair: Pair<Int, Int>) =
+            fun from(pair: Pair<Int, Int>) =
                 Coordinate(pair.first, pair.second)
         }
     }
 
-    private data class LocatedCoordinate(internal val coordinate: Coordinate, internal val nearest: Coordinate)
+    private data class LocatedCoordinate(val coordinate: Coordinate, val nearest: Coordinate)
 
-    private data class View(internal val minX: Int, internal val minY: Int, internal val maxX: Int, internal val maxY: Int) {
+    private data class View(val minX: Int, val minY: Int, val maxX: Int, val maxY: Int) {
         companion object {
-            internal fun fromPoints(coordinates: List<Coordinate>): View {
+            fun fromPoints(coordinates: List<Coordinate>): View {
                 val minX = coordinates.minBy { it.x }!!.x
                 val minY = coordinates.minBy { it.y }!!.y
                 val maxX = coordinates.maxBy { it.x }!!.x

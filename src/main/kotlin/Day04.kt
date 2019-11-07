@@ -34,13 +34,12 @@ class Day04 {
 
         val minutesPerGuard: MutableMap<Int, MutableMap<Int, Int>> =
             records
-                .filter { it is ShiftStartRecord }
-                .map { it as ShiftStartRecord }
+                .filterIsInstance<ShiftStartRecord>()
                 .map { it.guardId }
-                .associate { it to mutableMapOf<Int, Int>() }
+                .associateWith { mutableMapOf<Int, Int>() }
                 .toMutableMap()
-        var currentGuard: Int = -1
-        var sleepStarted: Int = -1
+        var currentGuard = -1
+        var sleepStarted = -1
 
         records.forEach {
             when (it) {
@@ -59,7 +58,7 @@ class Day04 {
 
     private interface Record {
         companion object {
-            private val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")!!
+            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")!!
 
             fun parseRecord(record: String) = when {
                 ShiftStartRecord.matches(record) -> ShiftStartRecord.parseFrom(record)
@@ -81,28 +80,30 @@ class Day04 {
 
     private data class ShiftStartRecord(override val timestamp: LocalDateTime, val guardId: Int) : Record {
         companion object {
+            val regex = """^\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2})] Guard #(\d+) begins shift$""".toRegex()
+
             fun matches(record: String) = regex.matches(record)
             fun parseFrom(record: String) = ShiftStartRecord(
                 Record.parseTimestamp(regex, record), Record.parseGuardId(regex, record)
             )
-
-            val regex = """^\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2})] Guard #(\d+) begins shift$""".toRegex()
         }
     }
 
     private data class AsleepRecord(override val timestamp: LocalDateTime) : Record {
         companion object {
+            val regex = """^\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2})] falls asleep$""".toRegex()
+
             fun matches(record: String) = regex.matches(record)
             fun parseFrom(record: String) = AsleepRecord(Record.parseTimestamp(regex, record))
-            val regex = """^\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2})] falls asleep$""".toRegex()
         }
     }
 
     private data class AwakenRecord(override val timestamp: LocalDateTime) : Record {
         companion object {
+            val regex = """^\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2})] wakes up$""".toRegex()
+
             fun matches(record: String) = regex.matches(record)
             fun parseFrom(record: String) = AwakenRecord(Record.parseTimestamp(regex, record))
-            val regex = """^\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2})] wakes up$""".toRegex()
         }
     }
 }

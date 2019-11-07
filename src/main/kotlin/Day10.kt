@@ -66,11 +66,11 @@ class Day10 {
         return message.map { it.joinToString("") }.joinToString(separator = "\n") { it }
     }
 
-    private data class Point(internal val initialPosition: Position, internal val velocity: Velocity) {
+    private data class Point(val initialPosition: Position, val velocity: Velocity) {
         companion object {
-            private val regex = """^position=<\s*(-?\d+),\s*(-?\d+)>\s*velocity=<\s*(-?\d+),\s*(-?\d+)>$""".toRegex()
+            val regex = """^position=<\s*(-?\d+),\s*(-?\d+)>\s*velocity=<\s*(-?\d+),\s*(-?\d+)>$""".toRegex()
 
-            internal fun from(pointDescription: String): Point {
+            fun from(pointDescription: String): Point {
                 val (xInitPos, yInitPos, xVelocity, yVelocity) =
                     regex.find(pointDescription)!!.destructured
 
@@ -82,15 +82,15 @@ class Day10 {
         }
     }
 
-    private data class Position(internal val xPosition: Int, internal val yPosition: Int)
+    private data class Position(val xPosition: Int, val yPosition: Int)
 
-    private data class Velocity(internal val xVelocity: Int, internal val yVelocity: Int)
+    private data class Velocity(val xVelocity: Int, val yVelocity: Int)
 
-    private data class View(internal val minimum: Position, internal val maximum: Position) {
+    private data class View(val minimum: Position, val maximum: Position) {
 
-        internal fun calculateSpread() =
+        fun calculateSpread() =
             (maximum.xPosition - minimum.xPosition) + (maximum.yPosition - minimum.yPosition)
     }
 
-    private data class MessageResult(internal val message: String, internal val time: Int)
+    private data class MessageResult(val message: String, val time: Int)
 }

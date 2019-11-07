@@ -78,28 +78,28 @@ class Day07 {
         newlyAvailableSteps.forEach { dependencies.remove(it) } // Remove now empty steps not to get scheduled again
     }
 
-    private data class Dependency(internal val beforeStep: Char, internal val afterStep: Char) {
+    private data class Dependency(val beforeStep: Char, val afterStep: Char) {
         companion object {
-            private val regex = """^Step (\w) must be finished before step (\w) can begin\.$""".toRegex()
+            val regex = """^Step (\w) must be finished before step (\w) can begin\.$""".toRegex()
 
-            internal fun from(requirement: String): Dependency {
+            fun from(requirement: String): Dependency {
                 val (beforeStep, afterStep) = regex.find(requirement)!!.destructured
                 return Dependency(beforeStep.single(), afterStep.single())
             }
         }
     }
 
-    private data class Task(internal val step: Char, private val endTime: Int) {
-        internal fun hasFinished(currentTime: Int) = currentTime >= endTime
+    private data class Task(val step: Char, val endTime: Int) {
+        fun hasFinished(currentTime: Int) = currentTime >= endTime
 
         companion object {
-            internal fun from(step: Char, startTime: Int, timeAddition: Int) =
+            fun from(step: Char, startTime: Int, timeAddition: Int) =
                 Task(step, calculateEndTime(step, startTime, timeAddition))
 
-            private fun calculateEndTime(step: Char, startTime: Int, timeAddition: Int) =
+            fun calculateEndTime(step: Char, startTime: Int, timeAddition: Int) =
                 step - 'A' + 1 + startTime + timeAddition
         }
     }
 
-    private data class Result(internal val sequence: String, internal val time: Int)
+    private data class Result(val sequence: String, val time: Int)
 }

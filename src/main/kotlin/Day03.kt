@@ -2,7 +2,9 @@ package be.inniger.advent
 
 class Day03 {
 
-    private val regex = """^#(\d+) @ (\d+),(\d+): (\d+)x(\d+)$""".toRegex()
+    companion object {
+        private val regex = """^#(\d+) @ (\d+),(\d+): (\d+)x(\d+)$""".toRegex()
+    }
 
     fun solveFirst(claims: List<String>) = groupClaimsByPointPositions(claims).count { it.size > 1 }
 
@@ -24,11 +26,10 @@ class Day03 {
             .map { Point(claimId, it.first, it.second) }
     }
 
-    private fun findAllClaimIds(groupedPoints: Collection<List<Point>>, nrOverlaps: Int): Set<String> {
-        return groupedPoints.filter { it.size > nrOverlaps }
+    private fun findAllClaimIds(groupedPoints: Collection<List<Point>>, nrOverlaps: Int) =
+        groupedPoints.filter { it.size > nrOverlaps }
             .flatMap { it.map { point -> point.claimId } }
             .toSet()
-    }
 
     private data class Point(val claimId: String, val x: Int, val y: Int)
 }

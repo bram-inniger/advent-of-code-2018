@@ -72,30 +72,30 @@ class Day09 {
 
     // Doubly linked node to easily shift left-right in a circular fashion
     private class Node {
-        internal val marble: Long
-        internal var prev: Node
-        internal var next: Node
+        val marble: Long
+        var prev: Node
+        var next: Node
 
-        internal constructor(marble: Long) {
+        constructor(marble: Long) {
             this.marble = marble
             this.prev = this
             this.next = this
         }
 
-        internal constructor(marble: Long, prev: Node, next: Node) {
+        constructor(marble: Long, prev: Node, next: Node) {
             this.marble = marble
             this.prev = prev
             this.next = next
         }
     }
 
-    private data class Turn(internal val currentNode: Node, internal val points: Long = 0L)
+    private data class Turn(val currentNode: Node, val points: Long = 0L)
 
-    private data class Game(internal val nrPlayers: Int, internal val lastMarble: Long) {
+    private data class Game(val nrPlayers: Int, val lastMarble: Long) {
         companion object {
-            private val regex = """^(\d+) players; last marble is worth (\d+) points$""".toRegex()
+            val regex = """^(\d+) players; last marble is worth (\d+) points$""".toRegex()
 
-            internal fun from(gameDescription: String, gameFactor: Int): Game {
+            fun from(gameDescription: String, gameFactor: Int): Game {
                 val (nrPlayers, lastMarble) = regex.find(gameDescription)!!.destructured
 
                 return Game(nrPlayers.toInt(), lastMarble.toLong() * gameFactor)

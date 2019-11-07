@@ -39,5 +39,5 @@ class Day08 {
         return Node(value, position + nrMetadataRecords - 1)
     }
 
-    private data class Node(internal val value: Int, internal val endPosition: Int)
+    private data class Node(val value: Int, val endPosition: Int)
 }
