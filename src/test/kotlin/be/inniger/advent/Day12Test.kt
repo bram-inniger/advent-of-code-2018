@@ -29,11 +29,21 @@ class Day12Test {
 
     @Test
     fun validateFirstSampleInputs() {
-        assertEquals(325, problem.solveFirst(sampleInput))
+        assertEquals(325L, problem.solveFirst(sampleInput))
     }
 
     @Test
     fun validateFirstSolution() {
-        assertEquals(3230, problem.solveFirst(input))
+        assertEquals(3230L, problem.solveFirst(input))
+    }
+
+    @Test
+    fun validateSecondSampleInputs() {
+        // No sample inputs given
+    }
+
+    @Test
+    fun validateSecondSolution() {
+        assertEquals(4_400_000_000_304L, problem.solveSecond(input))
     }
 }
