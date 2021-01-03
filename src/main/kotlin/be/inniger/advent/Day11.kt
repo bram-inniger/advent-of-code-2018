@@ -1,11 +1,9 @@
 package be.inniger.advent
 
-class Day11 {
+object Day11 {
 
-    companion object {
-        private const val GRID_SIZE = 300
-        private const val DEFAULT_SQUARE_SIZE = 3
-    }
+    private const val GRID_SIZE = 300
+    private const val DEFAULT_SQUARE_SIZE = 3
 
     fun solveFirst(serialNumber: Int) =
         solveGrid(serialNumber).simpleToString()

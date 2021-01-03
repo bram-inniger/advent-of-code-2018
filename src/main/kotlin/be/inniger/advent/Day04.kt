@@ -3,13 +3,13 @@ package be.inniger.advent
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-class Day04 {
+object Day04 {
 
     fun solveFirst(rawRecords: List<String>): Int {
         val minutesPerGuard = toMinutesPerGuard(toRecords(rawRecords))
 
-        val sleepiestGuard = minutesPerGuard.maxBy { it.value.map { entry -> entry.value }.sum() }!!.key
-        val sleepiestMinute = minutesPerGuard[sleepiestGuard]!!.maxBy { it.value }!!.key
+        val sleepiestGuard = minutesPerGuard.maxByOrNull { it.value.map { entry -> entry.value }.sum() }!!.key
+        val sleepiestMinute = minutesPerGuard[sleepiestGuard]!!.maxByOrNull { it.value }!!.key
 
         return sleepiestGuard * sleepiestMinute
     }
@@ -18,9 +18,9 @@ class Day04 {
         val sleepiestGuardByMinute = toMinutesPerGuard(toRecords(rawRecords))
             .map { entry ->
                 entry.key to (entry.value
-                    .maxBy { minute -> minute.value })
+                    .maxByOrNull { minute -> minute.value })
             }
-            .maxBy { it.second?.value ?: 0 }!!
+            .maxByOrNull { it.second?.value ?: 0 }!!
 
         return sleepiestGuardByMinute.first * sleepiestGuardByMinute.second!!.key
     }

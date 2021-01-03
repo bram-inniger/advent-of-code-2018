@@ -1,10 +1,8 @@
 package be.inniger.advent
 
-class Day03 {
+object Day03 {
 
-    companion object {
-        private val regex = """^#(\d+) @ (\d+),(\d+): (\d+)x(\d+)$""".toRegex()
-    }
+    private val regex = """^#(\d+) @ (\d+),(\d+): (\d+)x(\d+)$""".toRegex()
 
     fun solveFirst(claims: List<String>) = groupClaimsByPointPositions(claims).count { it.size > 1 }
 

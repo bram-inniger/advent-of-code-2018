@@ -1,13 +1,13 @@
 package be.inniger.advent
 
-class Day05 {
+object Day05 {
 
     fun solveFirst(polymer: String) = calculateCollapsedPolymerLength(polymer)
 
     fun solveSecond(polymer: String) = ('a'..'z')
         .map { polymer.replace("""[$it${pairs[it]}]""".toRegex(), "") }
         .map { calculateCollapsedPolymerLength(it) }
-        .min()!!
+        .minOrNull()!!
 
     private fun calculateCollapsedPolymerLength(polymerStr: String): Int {
         val polymer = StringBuilder(polymerStr)

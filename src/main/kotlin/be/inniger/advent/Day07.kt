@@ -1,9 +1,8 @@
 package be.inniger.advent
 
-import java.util.SortedSet
-import java.util.TreeSet
+import java.util.*
 
-class Day07 {
+object Day07 {
 
     fun solveFirst(requirements: List<String>) =
         solve(requirements).sequence
@@ -21,7 +20,7 @@ class Day07 {
             .toMap()
             .toMutableMap()
 
-        val availableSteps: SortedSet<Char> = TreeSet(findParentSteps(dependencies))
+        val availableSteps = findParentSteps(dependencies).toSortedSet()
         val activeTasks = mutableSetOf<Task>()
         val sequence = StringBuilder()
         var time = 0
@@ -60,8 +59,7 @@ class Day07 {
         // All steps required to happen before another, minus the ones that themselves have requirements
         val parentSteps = prerequisiteSteps.subtract(dependentSteps)
 
-        return if (parentSteps.isNotEmpty()) parentSteps
-        else throw NoSuchElementException()
+        return if (parentSteps.isNotEmpty()) parentSteps else error("No such element")
     }
 
     private fun resolveStep(

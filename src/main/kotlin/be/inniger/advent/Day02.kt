@@ -1,6 +1,6 @@
 package be.inniger.advent
 
-class Day02 {
+object Day02 {
 
     fun solveFirst(boxIds: List<String>) =
         nrBoxIdsContainingLettersTimes(boxIds, 2) * nrBoxIdsContainingLettersTimes(boxIds, 3)

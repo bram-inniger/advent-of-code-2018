@@ -1,6 +1,6 @@
 package be.inniger.advent
 
-class Day08 {
+object Day08 {
 
     fun solveFirst(license: List<Int>) =
         processNode(representation = license, simpleProcessing = true).value

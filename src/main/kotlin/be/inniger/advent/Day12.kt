@@ -1,13 +1,11 @@
 package be.inniger.advent
 
-import java.util.SortedSet
+import java.util.*
 
-class Day12 {
+object Day12 {
 
-    companion object {
-        private const val SMALL_NR_GENERATIONS = 20L
-        private const val BIG_NR_GENERATIONS = 50_000_000_000L
-    }
+    private const val SMALL_NR_GENERATIONS = 20L
+    private const val BIG_NR_GENERATIONS = 50_000_000_000L
 
     fun solveFirst(input: List<String>) =
         solve(input, SMALL_NR_GENERATIONS)
@@ -57,7 +55,7 @@ class Day12 {
             val nextPlants = findNextGeneration(plants, patterns)
 
             if (plantsMatch(plants, nextPlants)) {
-                val movementDelta = nextPlants.min()!! - plants.min()!!
+                val movementDelta = nextPlants.minOrNull()!! - plants.minOrNull()!!
 
                 return RepeatingPlants(plants, movementDelta, generation)
             }
@@ -68,15 +66,15 @@ class Day12 {
     }
 
     private fun plantsMatch(prevGeneration: SortedSet<Long>, nextGeneration: SortedSet<Long>): Boolean {
-        val shift = prevGeneration.min()!! - nextGeneration.min()!!
+        val shift = prevGeneration.minOrNull()!! - nextGeneration.minOrNull()!!
 
         return prevGeneration.size == nextGeneration.size &&
                 prevGeneration.all { nextGeneration.contains(it - shift) }
     }
 
     private fun findNextGeneration(plants: SortedSet<Long>, patterns: List<Pattern>): SortedSet<Long> {
-        val smallestPossiblePlant = plants.min()!! - 2
-        val biggestPossiblePlant = plants.max()!! + 2
+        val smallestPossiblePlant = plants.minOrNull()!! - 2
+        val biggestPossiblePlant = plants.maxOrNull()!! + 2
 
         return (smallestPossiblePlant..biggestPossiblePlant)
             .filter { plant ->

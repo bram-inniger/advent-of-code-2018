@@ -1,12 +1,11 @@
 package be.inniger.advent
 
 import be.inniger.advent.util.readInputFile
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class Day04Test {
 
-    private val problem = Day04()
     private val input = readInputFile("04")
     private val records = listOf(
         "[1518-11-01 00:00] Guard #10 begins shift",
@@ -30,21 +29,21 @@ class Day04Test {
 
     @Test
     fun validateFirstSampleInputs() {
-        assertEquals(240, problem.solveFirst(records))
+        assertEquals(240, Day04.solveFirst(records))
     }
 
     @Test
     fun validateFirstSolution() {
-        assertEquals(101262, problem.solveFirst(input))
+        assertEquals(101_262, Day04.solveFirst(input))
     }
 
     @Test
     fun validateSecondSampleInputs() {
-        assertEquals(4455, problem.solveSecond(records))
+        assertEquals(4_455, Day04.solveSecond(records))
     }
 
     @Test
     fun validateSecondSolution() {
-        assertEquals(71976, problem.solveSecond(input))
+        assertEquals(71_976, Day04.solveSecond(input))
     }
 }

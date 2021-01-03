@@ -2,7 +2,7 @@ package be.inniger.advent
 
 import kotlin.math.abs
 
-class Day06 {
+object Day06 {
 
     fun solveFirst(inputCoordinates: List<String>): Int {
         val points = pointsFromInput(inputCoordinates)
@@ -14,7 +14,7 @@ class Day06 {
             .groupBy { it.nearest }
             .values
             .mapNotNull { getSizeOfGroup(it, view) }
-            .max()!!
+            .maxOrNull()!!
     }
 
     fun solveSecond(inputCoordinates: List<String>, upperLimit: Int): Int {
@@ -41,7 +41,7 @@ class Day06 {
 
     private fun locate(coordinate: Coordinate, points: List<Coordinate>): LocatedCoordinate? =
         points.groupBy { coordinate.manhattanDistanceTo(it) }
-            .minBy { it.key }!!
+            .minByOrNull { it.key }!!
             .value
             .singleOrNull()
             .let { if (it != null) LocatedCoordinate(coordinate, it) else null }
@@ -82,10 +82,10 @@ class Day06 {
     private data class View(val minX: Int, val minY: Int, val maxX: Int, val maxY: Int) {
         companion object {
             fun fromPoints(coordinates: List<Coordinate>): View {
-                val minX = coordinates.minBy { it.x }!!.x
-                val minY = coordinates.minBy { it.y }!!.y
-                val maxX = coordinates.maxBy { it.x }!!.x
-                val maxY = coordinates.maxBy { it.y }!!.y
+                val minX = coordinates.minByOrNull { it.x }!!.x
+                val minY = coordinates.minByOrNull { it.y }!!.y
+                val maxX = coordinates.maxByOrNull { it.x }!!.x
+                val maxY = coordinates.maxByOrNull { it.y }!!.y
 
                 return View(minX, minY, maxX, maxY)
             }

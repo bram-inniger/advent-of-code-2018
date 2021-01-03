@@ -1,19 +1,11 @@
 package be.inniger.advent
 
 import be.inniger.advent.util.readInputFile
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class Day07Test {
 
-    companion object {
-        const val SAMPLE_NR_WORKERS = 2
-        const val SAMPLE_TIME_ADDITION = 0
-        const val PROBLEM_NR_WORKERS = 5
-        const val PROBLEM_TIME_ADDITION = 60
-    }
-
-    private val problem = Day07()
     private val input = readInputFile("07")
     private val requirements = listOf(
         "Step C must be finished before step A can begin.",
@@ -27,21 +19,21 @@ class Day07Test {
 
     @Test
     fun validateFirstSampleInputs() {
-        assertEquals("CABDFE", problem.solveFirst(requirements))
+        assertEquals("CABDFE", Day07.solveFirst(requirements))
     }
 
     @Test
     fun validateFirstSolution() {
-        assertEquals("CGKMUWXFAIHSYDNLJQTREOPZBV", problem.solveFirst(input))
+        assertEquals("CGKMUWXFAIHSYDNLJQTREOPZBV", Day07.solveFirst(input))
     }
 
     @Test
     fun validateSecondSampleInputs() {
-        assertEquals(15, problem.solveSecond(requirements, SAMPLE_NR_WORKERS, SAMPLE_TIME_ADDITION))
+        assertEquals(15, Day07.solveSecond(requirements, 2, 0))
     }
 
     @Test
     fun validateSecondSolution() {
-        assertEquals(1046, problem.solveSecond(input, PROBLEM_NR_WORKERS, PROBLEM_TIME_ADDITION))
+        assertEquals(1_046, Day07.solveSecond(input, 5, 60))
     }
 }

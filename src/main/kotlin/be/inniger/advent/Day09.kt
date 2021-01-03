@@ -1,13 +1,11 @@
 package be.inniger.advent
 
-class Day09 {
+object Day09 {
 
-    companion object {
-        private const val STARTING_MARBLE = 0L
-        private const val SCORING_COEFFICIENT = 23
-        private const val STANDARD_GAME_FACTOR = 1
-        private const val LONG_GAME_FACTOR = 100
-    }
+    private const val STARTING_MARBLE = 0L
+    private const val SCORING_COEFFICIENT = 23
+    private const val STANDARD_GAME_FACTOR = 1
+    private const val LONG_GAME_FACTOR = 100
 
     fun solveFirst(gameDescription: String) =
         play(Game.from(gameDescription, STANDARD_GAME_FACTOR))
@@ -27,7 +25,7 @@ class Day09 {
             scores[player] = scores[player] + turn.points
         }
 
-        return scores.max()!!
+        return scores.maxOrNull()!!
     }
 
     private fun takeTurn(marble: Long, currentNode: Node): Turn {

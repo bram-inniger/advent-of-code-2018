@@ -1,12 +1,11 @@
 package be.inniger.advent
 
 import be.inniger.advent.util.readInputFile
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class Day10Test {
 
-    private val problem = Day10()
     private val input = readInputFile("10")
     private val pointDescriptions = listOf(
         "position=< 9,  1> velocity=< 0,  2>",
@@ -44,45 +43,47 @@ class Day10Test {
 
     @Test
     fun validateFirstSampleInputs() {
-        val print = """
-            #...#..###
-            #...#...#.
-            #...#...#.
-            #####...#.
-            #...#...#.
-            #...#...#.
-            #...#...#.
-            #...#..###
+        val print =
+            """
+                #...#..###
+                #...#...#.
+                #...#...#.
+                #####...#.
+                #...#...#.
+                #...#...#.
+                #...#...#.
+                #...#..###
             """.trimIndent()
 
-        assertEquals(print, problem.solveFirst(pointDescriptions))
+        assertEquals(print, Day10.solveFirst(pointDescriptions))
     }
 
     @Test
     fun validateFirstSolution() {
-        val print = """
-            #....#..######..#....#...####...#####......###...####...######
-            #...#........#..#....#..#....#..#....#......#...#....#.......#
-            #..#.........#..#....#..#.......#....#......#...#............#
-            #.#.........#...#....#..#.......#....#......#...#...........#.
-            ##.........#....######..#.......#####.......#...#..........#..
-            ##........#.....#....#..#..###..#..#........#...#..###....#...
-            #.#......#......#....#..#....#..#...#.......#...#....#...#....
-            #..#....#.......#....#..#....#..#...#...#...#...#....#..#.....
-            #...#...#.......#....#..#...##..#....#..#...#...#...##..#.....
-            #....#..######..#....#...###.#..#....#...###.....###.#..######
+        val print =
+            """
+                #....#..######..#....#...####...#####......###...####...######
+                #...#........#..#....#..#....#..#....#......#...#....#.......#
+                #..#.........#..#....#..#.......#....#......#...#............#
+                #.#.........#...#....#..#.......#....#......#...#...........#.
+                ##.........#....######..#.......#####.......#...#..........#..
+                ##........#.....#....#..#..###..#..#........#...#..###....#...
+                #.#......#......#....#..#....#..#...#.......#...#....#...#....
+                #..#....#.......#....#..#....#..#...#...#...#...#....#..#.....
+                #...#...#.......#....#..#...##..#....#..#...#...#...##..#.....
+                #....#..######..#....#...###.#..#....#...###.....###.#..######
             """.trimIndent()
 
-        assertEquals(print, problem.solveFirst(input))
+        assertEquals(print, Day10.solveFirst(input))
     }
 
     @Test
     fun validateSecondSampleInputs() {
-        assertEquals(3, problem.solveSecond(pointDescriptions))
+        assertEquals(3, Day10.solveSecond(pointDescriptions))
     }
 
     @Test
     fun validateSecondSolution() {
-        assertEquals(10932, problem.solveSecond(input))
+        assertEquals(10_932, Day10.solveSecond(input))
     }
 }

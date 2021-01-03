@@ -1,6 +1,6 @@
 package be.inniger.advent
 
-class Day10 {
+object Day10 {
 
     fun solveFirst(pointDescriptions: List<String>) =
         findMessage(pointDescriptions).message
@@ -45,10 +45,10 @@ class Day10 {
         }
 
     private fun viewFrom(positions: List<Position>): View {
-        val xMin = positions.map { it.xPosition }.min()!!
-        val xMax = positions.map { it.xPosition }.max()!!
-        val yMin = positions.map { it.yPosition }.min()!!
-        val yMax = positions.map { it.yPosition }.max()!!
+        val xMin = positions.map { it.xPosition }.minOrNull()!!
+        val xMax = positions.map { it.xPosition }.maxOrNull()!!
+        val yMin = positions.map { it.yPosition }.minOrNull()!!
+        val yMax = positions.map { it.yPosition }.maxOrNull()!!
 
         return View(Position(xMin, yMin), Position(xMax, yMax))
     }
