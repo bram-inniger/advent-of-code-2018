@@ -24,6 +24,34 @@ object Day13 {
         }
     }
 
+    fun solveSecond(tracks: List<String>): String {
+        val grid = Grid.of(tracks)
+        val carts = readCarts(tracks)
+
+        while (true) {
+            if (carts.size == 1) {
+                return carts.keys.single().toString()
+            }
+
+            val moveOrder = carts.keys.sortedWith(compareBy({ it.y }, { it.x }))
+
+            for (position in moveOrder) {
+                val cart = carts.remove(position)
+                if (cart != null) {
+                    val track = grid.tracks[position]!!
+
+                    val (newCart, newPosition) = moveCart(cart, position, track)
+
+                    if (carts.containsKey(newPosition)) {
+                        carts.remove(newPosition)
+                    } else {
+                        carts[newPosition] = newCart
+                    }
+                }
+            }
+        }
+    }
+
     private fun readCarts(tracks: List<String>): MutableMap<Coordinate, Cart> {
         return tracks.flatMapIndexed { y, tracksString ->
             tracksString.toCharArray().mapIndexed { x, track ->
