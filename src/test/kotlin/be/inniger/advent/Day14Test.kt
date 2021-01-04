@@ -6,7 +6,7 @@ import kotlin.test.assertEquals
 
 class Day14Test {
 
-    private val input = readInputFile("14")[0].toInt()
+    private val input = readInputFile("14")[0]
 
     @Test
     fun validateFirstSampleInputs() {
@@ -18,6 +18,19 @@ class Day14Test {
 
     @Test
     fun validateFirstSolution() {
-        assertEquals("7116398711", Day14.solveFirst(input))
+        assertEquals("7116398711", Day14.solveFirst(input.toInt()))
+    }
+
+    @Test
+    fun validateSecondSampleInputs() {
+        assertEquals(9, Day14.solveSecond("51589"))
+        assertEquals(5, Day14.solveSecond("01245"))
+        assertEquals(18, Day14.solveSecond("92510"))
+        assertEquals(2_018, Day14.solveSecond("59414"))
+    }
+
+    @Test
+    fun validateSecondSolution() {
+        assertEquals(20_316_365, Day14.solveSecond(input))
     }
 }
