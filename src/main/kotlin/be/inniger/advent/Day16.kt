@@ -1,18 +1,64 @@
 package be.inniger.advent
 
+import be.inniger.advent.util.head
+import be.inniger.advent.util.tail
+
 object Day16 {
 
     fun solveFirst(samples: String) =
-        samples.split("\n\n\n")[0]
+        samples.split("\n\n\n\n")[0]
             .split("\n\n")
             .map { Sample.of(it) }
-            .map { findMatchingOpcodes(it) }
-            .filter { it.size >= 3 }
-            .count()
+            .count { findMatchingOpcodes(it).size >= 3 }
 
-    private fun findMatchingOpcodes(sample: Sample) =
-        Opcode.values()
-            .filter { it.operation(sample.before, sample.instr[1], sample.instr[2], sample.instr[3]) == sample.after }
+    fun solveSecond(samplesRaw: String): Int {
+        val samples = samplesRaw.split("\n\n\n\n")[0]
+            .split("\n\n")
+            .map { Sample.of(it) }
+        val program = samplesRaw.split("\n\n\n\n")[1]
+            .split("\n")
+            .map { instr -> instr.split(" ").map { code -> code.toInt() } }
+
+        return runProgram(
+            program,
+            deduceOpcodes(samples),
+            listOf(0, 0, 0, 0)
+        )[0]
+    }
+
+    private fun findMatchingOpcodes(sample: Sample, opcodes: Set<Opcode> = Opcode.values().toSet()) =
+        opcodes.filter {
+            it.operation(
+                sample.before,
+                sample.instr[1],
+                sample.instr[2],
+                sample.instr[3]
+            ) == sample.after
+        }
+
+    private tailrec fun deduceOpcodes(
+        samples: List<Sample>,
+        toFind: Set<Opcode> = Opcode.values().toSet(),
+        found: Map<Int, Opcode> = mapOf()
+    ): Map<Int, Opcode> =
+        if (toFind.isEmpty()) found
+        else {
+            val (instr, opcode) = samples
+                .filter { !found.keys.contains(it.instr[0]) }
+                .map { it to findMatchingOpcodes(it, toFind) }
+                .first { it.second.size == 1 }
+                .let { it.first.instr[0] to it.second.single() }
+
+            deduceOpcodes(samples, toFind - opcode, found + (instr to opcode))
+        }
+
+    private tailrec fun runProgram(program: List<List<Int>>, opcodes: Map<Int, Opcode>, reg: List<Int>): List<Int> =
+        if (program.isEmpty()) reg
+        else {
+            val instr = program.head()
+            val newReg = opcodes[instr[0]]!!.operation(reg, instr[1], instr[2], instr[3])
+            runProgram(program.tail(), opcodes, newReg)
+        }
 
     private enum class Opcode(val operation: (reg: List<Int>, inA: Int, inB: Int, outC: Int) -> List<Int>) {
         ADDR({ reg, inA, inB, outC -> updateReg(reg, outC, reg[inA] + reg[inB]) }),
